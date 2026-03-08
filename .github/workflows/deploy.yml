@@ -23,9 +23,10 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: "."
+          source: "./*"
           target: ${{ secrets.APP_PATH }}
           overwrite: true
+          timeout: 2m
 
       - name: Deploy via SSH (development)
         uses: appleboy/ssh-action@v1.2.2
@@ -34,6 +35,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
+          timeout: 2m
           script: |
             set -e
             cd "${{ secrets.APP_PATH }}"
@@ -55,9 +57,10 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: "."
+          source: "./*"
           target: ${{ secrets.APP_PATH }}
           overwrite: true
+          timeout: 2m
 
       - name: Deploy via SSH (production)
         uses: appleboy/ssh-action@v1.2.2
@@ -66,6 +69,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
+          timeout: 2m
           script: |
             set -e
             cd "${{ secrets.APP_PATH }}"
