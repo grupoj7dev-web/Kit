@@ -13,7 +13,7 @@ services:
         - "traefik.docker.network=Admin"
         - "traefik.http.routers.kit.rule=Host(`kit.iasolar.io`)"
         - "traefik.http.routers.kit.entrypoints=websecure"
-        - "traefik.http.routers.kit.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.kit.tls.certresolver=letsencryptresolver"
         - "traefik.http.services.kit.loadbalancer.server.port=3000"
     working_dir: /app
     volumes:
