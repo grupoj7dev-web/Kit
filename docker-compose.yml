@@ -3,7 +3,7 @@ services:
   novokit05:
     image: node:20-alpine
     networks:
-      - traefik-public
+      - Admin
     deploy:
       replicas: 1
       restart_policy:
@@ -23,6 +23,5 @@ services:
       - "4222:3000"
 
 networks:
-  traefik-public:
+  Admin:
     external: true
-    name: Admin
