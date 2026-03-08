@@ -40,7 +40,12 @@ jobs:
             set -e
             cd "${{ secrets.APP_PATH }}"
             echo "${{ secrets.ENV_FILE_CONTENT_B64 }}" | base64 -d > .env.local
-            docker network create traefik-public >/dev/null 2>&1 || true
+            docker compose down --remove-orphans || true
+            DRIVER="$(docker network inspect traefik-public -f '{{.Driver}}' 2>/dev/null || true)"
+            if [ "$DRIVER" != "overlay" ]; then
+              docker network rm traefik-public >/dev/null 2>&1 || true
+              docker network create --driver overlay --attachable traefik-public >/dev/null 2>&1 || true
+            fi
             docker compose up -d --build --remove-orphans
 
   deploy-prod:
@@ -75,5 +80,10 @@ jobs:
             set -e
             cd "${{ secrets.APP_PATH }}"
             echo "${{ secrets.ENV_FILE_CONTENT_B64 }}" | base64 -d > .env.local
-            docker network create traefik-public >/dev/null 2>&1 || true
+            docker compose down --remove-orphans || true
+            DRIVER="$(docker network inspect traefik-public -f '{{.Driver}}' 2>/dev/null || true)"
+            if [ "$DRIVER" != "overlay" ]; then
+              docker network rm traefik-public >/dev/null 2>&1 || true
+              docker network create --driver overlay --attachable traefik-public >/dev/null 2>&1 || true
+            fi
             docker compose up -d --build --remove-orphans
