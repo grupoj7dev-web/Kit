@@ -53,9 +53,11 @@ jobs:
             echo
             echo "=== Kit service inspect ==="
             docker service inspect kit_novokit05 --format '{{json .Spec.Labels}}' || true
+            docker service inspect kit_novokit05 --format '{{json .Spec.TaskTemplate.Networks}}' || true
             echo
             echo "=== Traefik service networks ==="
             docker service inspect traefik_traefik --format '{{json .Spec.TaskTemplate.Networks}}' || true
+            docker service inspect traefik_traefik --format '{{json .Spec.TaskTemplate.ContainerSpec.Args}}' || true
             echo
             echo "=== Kit service tasks ==="
             docker service ps kit_novokit05 || true
