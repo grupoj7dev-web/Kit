@@ -63,4 +63,5 @@ jobs:
             echo "=== Local HTTP checks ==="
             curl -sS -I --max-time 10 http://127.0.0.1:80 -H "Host: kit.iasolar.io" || true
             curl -sS -k -I --max-time 10 https://127.0.0.1:443 -H "Host: kit.iasolar.io" || true
+            curl -sS -k -I --max-time 10 --resolve kit.iasolar.io:443:127.0.0.1 https://kit.iasolar.io || true
             curl -sS -I --max-time 10 http://127.0.0.1:4222 || true
