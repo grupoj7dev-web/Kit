@@ -41,10 +41,10 @@ jobs:
             cd "${{ secrets.APP_PATH }}"
             echo "${{ secrets.ENV_FILE_CONTENT_B64 }}" | base64 -d > .env.local
             docker compose down --remove-orphans || true
-            DRIVER="$(docker network inspect traefik-public -f '{{.Driver}}' 2>/dev/null || true)"
+            DRIVER="$(docker network inspect Admin -f '{{.Driver}}' 2>/dev/null || true)"
             if [ "$DRIVER" != "overlay" ]; then
-              docker network rm traefik-public >/dev/null 2>&1 || true
-              docker network create --driver overlay --attachable traefik-public >/dev/null 2>&1 || true
+              docker network rm Admin >/dev/null 2>&1 || true
+              docker network create --driver overlay --attachable Admin >/dev/null 2>&1 || true
             fi
             docker stack deploy -c docker-compose.yml kit
 
@@ -81,9 +81,9 @@ jobs:
             cd "${{ secrets.APP_PATH }}"
             echo "${{ secrets.ENV_FILE_CONTENT_B64 }}" | base64 -d > .env.local
             docker compose down --remove-orphans || true
-            DRIVER="$(docker network inspect traefik-public -f '{{.Driver}}' 2>/dev/null || true)"
+            DRIVER="$(docker network inspect Admin -f '{{.Driver}}' 2>/dev/null || true)"
             if [ "$DRIVER" != "overlay" ]; then
-              docker network rm traefik-public >/dev/null 2>&1 || true
-              docker network create --driver overlay --attachable traefik-public >/dev/null 2>&1 || true
+              docker network rm Admin >/dev/null 2>&1 || true
+              docker network create --driver overlay --attachable Admin >/dev/null 2>&1 || true
             fi
             docker stack deploy -c docker-compose.yml kit
