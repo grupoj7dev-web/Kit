@@ -57,6 +57,10 @@ jobs:
             echo "=== Kit service tasks ==="
             docker service ps kit_novokit05 || true
             echo
+            echo "=== Kit service logs ==="
+            docker service logs --tail=200 kit_novokit05 || true
+            echo
             echo "=== Local HTTP checks ==="
             curl -sS -I --max-time 10 http://127.0.0.1:80 -H "Host: kit.iasolar.io" || true
             curl -sS -k -I --max-time 10 https://127.0.0.1:443 -H "Host: kit.iasolar.io" || true
+            curl -sS -I --max-time 10 http://127.0.0.1:4222 || true
