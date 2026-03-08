@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executar Migração - Adicionar Coluna</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #FF6B00;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #e65100;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .manual-instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Adicionar Coluna: potencia_modulo_aceita_w</h1>
+        
+        <p>Esta migração adiciona a coluna <code>potencia_modulo_aceita_w</code> na tabela <code>inversores</code>.</p>
+        
+        <button id="runMigration" onclick="runMigration()">▶️ Executar Migração</button>
+        <button onclick="showManualInstructions()">📋 Ver Instruções Manuais</button>
+        
+        <div id="result" class="result"></div>
+        
+        <div id="manualInstructions" class="manual-instructions" style="display: none;">
+            <h3>Instruções para Execução Manual</h3>
+            <p>Se a migração automática falhar, execute o SQL abaixo no Supabase SQL Editor:</p>
+            <p><a href="https://supabase.com/dashboard/project/bjbqjsqmawlxylpziopa/sql" target="_blank">Abrir Supabase SQL Editor →</a></p>
+            <pre>ALTER TABLE inversores 
+ADD COLUMN IF NOT EXISTS potencia_modulo_aceita_w INTEGER;
+
+COMMENT ON COLUMN inversores.potencia_modulo_aceita_w 
+IS 'Potência máxima do módulo que o microinversor aceita (em Watts)';</pre>
+        </div>
+    </div>
+
+    <script>
+        async function runMigration() {
+            const button = document.getElementById('runMigration');
+            const resultDiv = document.getElementById('result');
+            
+            button.disabled = true;
+            button.textContent = '⏳ Executando...';
+            resultDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/migrate/add-column', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                resultDiv.style.display = 'block';
+                
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ Sucesso!</strong><br>
+                        ${data.message}
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <strong>❌ Erro:</strong><br>
+                        ${data.error}<br><br>
+                        ${data.hint ? `<em>${data.hint}</em><br><br>` : ''}
+                        ${data.sql ? `<strong>SQL para executar manualmente:</strong><pre>${data.sql}</pre>` : ''}
+                    `;
+                    showManualInstructions();
+                }
+            } catch (error) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <strong>❌ Erro de conexão:</strong><br>
+                    ${error.message}
+                `;
+                showManualInstructions();
+            } finally {
+                button.disabled = false;
+                button.textContent = '▶️ Executar Migração';
+            }
+        }
+        
+        function showManualInstructions() {
+            document.getElementById('manualInstructions').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

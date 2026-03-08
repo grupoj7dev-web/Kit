@@ -1,0 +1,27 @@
+version: '3.3'
+services:
+  novokit05:
+    image: node:20-alpine
+    networks:
+      - traefik-public
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "npm install && npm run build && npm run start"
+    ports:
+      - "4222:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.kit.rule=Host(`kit.iasolar.io`)"
+      - "traefik.http.routers.kit.entrypoints=websecure"
+      - "traefik.http.routers.kit.tls.certresolver=letsencrypt"
+      - "traefik.http.services.kit.loadbalancer.server.port=3000"
+
+networks:
+  traefik-public:
+    external: true
