@@ -1,0 +1,49 @@
+name: Debug Server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug-prod:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Inspect server state
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 2m
+          command_timeout: 15m
+          script: |
+            set -e
+            echo "=== Host ==="
+            hostname
+            date
+            echo
+            echo "=== Docker ps ==="
+            docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+            echo
+            echo "=== Networks ==="
+            docker network ls
+            echo
+            echo "=== App dir ==="
+            ls -la "${{ secrets.APP_PATH }}" || true
+            echo
+            echo "=== Compose ps ==="
+            cd "${{ secrets.APP_PATH }}"
+            docker compose ps
+            echo
+            echo "=== Compose logs (novokit05) ==="
+            docker compose logs --tail=200 novokit05 || true
+            echo
+            echo "=== Traefik containers ==="
+            docker ps --filter name=traefik --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+            echo
+            TRAEFIK_ID=$(docker ps -q --filter name=traefik | head -n 1)
+            if [ -n "$TRAEFIK_ID" ]; then
+              echo "=== Traefik logs ==="
+              docker logs --tail=200 "$TRAEFIK_ID" || true
+            fi
