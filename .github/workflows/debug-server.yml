@@ -47,3 +47,16 @@ jobs:
               echo "=== Traefik logs ==="
               docker logs --tail=200 "$TRAEFIK_ID" || true
             fi
+            echo
+            echo "=== Swarm services ==="
+            docker service ls
+            echo
+            echo "=== Kit service inspect ==="
+            docker service inspect kit_novokit05 --format '{{json .Spec.Labels}}' || true
+            echo
+            echo "=== Kit service tasks ==="
+            docker service ps kit_novokit05 || true
+            echo
+            echo "=== Local HTTP checks ==="
+            curl -sS -I --max-time 10 http://127.0.0.1:80 -H "Host: kit.iasolar.io" || true
+            curl -sS -k -I --max-time 10 https://127.0.0.1:443 -H "Host: kit.iasolar.io" || true
