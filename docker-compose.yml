@@ -10,7 +10,7 @@ services:
         condition: on-failure
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik-public"
+        - "traefik.docker.network=Admin"
         - "traefik.http.routers.kit.rule=Host(`kit.iasolar.io`)"
         - "traefik.http.routers.kit.entrypoints=websecure"
         - "traefik.http.routers.kit.tls.certresolver=letsencrypt"
@@ -25,3 +25,4 @@ services:
 networks:
   traefik-public:
     external: true
+    name: Admin
