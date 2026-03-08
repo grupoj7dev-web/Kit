@@ -37,6 +37,7 @@ jobs:
           script: |
             set -e
             cd "${{ secrets.APP_PATH }}"
+            docker network create traefik-public >/dev/null 2>&1 || true
             docker compose up -d --build --remove-orphans
 
   deploy-prod:
@@ -68,4 +69,5 @@ jobs:
           script: |
             set -e
             cd "${{ secrets.APP_PATH }}"
+            docker network create traefik-public >/dev/null 2>&1 || true
             docker compose up -d --build --remove-orphans
