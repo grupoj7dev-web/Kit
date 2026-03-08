@@ -46,7 +46,7 @@ jobs:
               docker network rm traefik-public >/dev/null 2>&1 || true
               docker network create --driver overlay --attachable traefik-public >/dev/null 2>&1 || true
             fi
-            docker compose up -d --build --remove-orphans
+            docker stack deploy -c docker-compose.yml kit
 
   deploy-prod:
     if: github.ref == 'refs/heads/main'
@@ -86,4 +86,4 @@ jobs:
               docker network rm traefik-public >/dev/null 2>&1 || true
               docker network create --driver overlay --attachable traefik-public >/dev/null 2>&1 || true
             fi
-            docker compose up -d --build --remove-orphans
+            docker stack deploy -c docker-compose.yml kit
